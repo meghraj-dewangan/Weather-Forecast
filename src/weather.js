@@ -206,6 +206,32 @@ function getLocation() {
     );
 }
   
+// auto Run at currect location
+
+(function getLocation() {
+    navigator.geolocation.getCurrentPosition(
+        position => {
+            const { latitude, longitude } = position.coords;
+            const reverseGeocoding = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${apiKey}`;
+
+            fetch(reverseGeocoding)
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                    const { name } = data[0];
+                    getWeatherDetails(name, latitude, longitude);
+                })
+                .catch(() => {
+                    alert('Error occurred while fetching the city!');
+                });
+        },
+        error => {
+            if (error.code === error.PERMISSION_DENIED) {
+                alert('Geolocation Permission denied. Please enable location access.');
+            }
+        }
+    );
+})();
 
 locationButton.addEventListener("click", getLocation);
 
